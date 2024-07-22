@@ -1,20 +1,36 @@
 package wasteManagement.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import wasteManagement.model.entitys.Bin;
 import wasteManagement.model.repositorys.BinsRepository;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WorkerService {
 
+    //this value indicates the maximum number of stops that can be added
+    //to a workers daily work route
+    @Value("${route.max_value}")
+    private int maxRouteStops;
+
     private final BinsRepository binsRepository;
+
+    //this method allows to change the status of a bin
+    public void binEmptied(long id){
+        try{
+            binsRepository.binEmptied(id);
+        } catch (Exception e){
+            log.error("There was an error contacting the database for bins emptied", e);
+            throw e;
+        }
+
+    }
 
     // Function to find the shortest path using a heuristic approach (Nearest Neighbor)
     public List<Bin> plotWorkerRoute(String city){
@@ -22,19 +38,25 @@ public class WorkerService {
         //get a list of all bins that need to be emptied from the workers city
         List<Bin> bins = binsRepository.findByNeedEmptying(city);
 
-        //start creating a route from the list
+        if (bins.isEmpty()){
+            return null;
+        }
+
+        //start creating a route from a random starting point
         List<Bin> route = new ArrayList<>();
         Set<Bin> visited = new HashSet<>();
         Bin current = bins.get(0);
         route.add(current);
         visited.add(current);
 
-        while (visited.size() < bins.size()) {
+
+        while (visited.size() < bins.size() && route.size() < maxRouteStops) {
             Bin nearest = null;
             double minDistance = Double.MAX_VALUE;
+            //find the nearest bin
             for (Bin bin : bins) {
                 if (!visited.contains(bin)) {
-                    double distance = current.distanceTo(bin);
+                    double distance = Objects.requireNonNull(current).distanceTo(bin);
                     if (distance < minDistance) {
                         minDistance = distance;
                         nearest = bin;
@@ -45,6 +67,19 @@ public class WorkerService {
             visited.add(nearest);
             current = nearest;
         }
+
+        //change state of the bins in the route we found to beingEmptied = True
+        try {
+            List<Long> routeIds = new ArrayList<>();
+            for (Bin bin : route) {
+                routeIds.add(bin.getId());
+            }
+            binsRepository.updateBeingEmptied(routeIds);
+        } catch (Exception e) {
+            log.error("Error updating route bins status", e);
+            throw e;
+        }
+
         return route;
     }
 }
