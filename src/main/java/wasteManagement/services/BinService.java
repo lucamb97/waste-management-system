@@ -18,9 +18,14 @@ public class BinService {
         return binsRepository.findByCity(city);
     }
 
+    public Bin getBinById(long id) {
+        return binsRepository.findById(id);
+    }
+
     public void addBins(List<Bin> bins){
         binsRepository.saveAll(bins);
     }
 
     public void deleteBins(List<Long> ids) {binsRepository.deleteAllById(ids);}
 }
+
