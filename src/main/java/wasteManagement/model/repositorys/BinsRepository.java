@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import wasteManagement.model.entitys.Bin;
 
+
 import java.util.List;
 
 @Repository
