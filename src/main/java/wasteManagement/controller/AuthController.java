@@ -4,126 +4,69 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 import wasteManagement.configuration.utils.JwtUtils;
 import wasteManagement.model.utils.LoginRequest;
 import wasteManagement.model.utils.LoginResponse;
+import wasteManagement.services.AuthService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
 public class AuthController {
 
     @Autowired
+    private AuthService authService;
+
+    @Autowired
     private UserDetailsService userDetailsService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JdbcUserDetailsManager jdbcUserDetailsManager;
 
     @Autowired
     private JwtUtils jwtUtils;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
+    //This is used to create a new USER, can be used without authentication
     @PostMapping("/user/register")
     public ResponseEntity<String> register(@RequestBody LoginRequest user) {
         try {
-            // Check if the username already exists
-            if (jdbcUserDetailsManager.userExists(user.getUsername())) {
-                return new ResponseEntity<>("Username already exists", HttpStatus.BAD_REQUEST);
-            }
-
-            // Create user details
-            UserDetails newUser = User.withUsername(user.getUsername())
-                    .password(passwordEncoder.encode(user.getPassword()))
-                    .roles("USER")
-                    .build();
-
-            // Save the new user in the database
-            jdbcUserDetailsManager.createUser(newUser);
-
-            // Return a success response
-            return ResponseEntity.ok("User registered successfully");
-
-        } catch (Exception e) {
-            log.error("Error during registration", e);
+        authService.register(user, "USER");
+        return ResponseEntity.ok("User registered successfully");
+        } catch (AuthenticationException e) {
+            log.error("User already exists");
+            return new ResponseEntity<>("User already exists", HttpStatus.FORBIDDEN);
+        }
+        catch (Exception e) {
+            log.error("Error during worker registration");
             return new ResponseEntity<>("Error during registration", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping("/admin/registerWorker")
-    public ResponseEntity<String> registerWorker(@RequestBody LoginRequest user) {
+    //This is used to create any other role, can only be used by admins
+    @PostMapping("/admin/registerAnyRole")
+    public ResponseEntity<String> registerWorker(@RequestBody LoginRequest user, @RequestParam String role) {
         try {
-            // Check if the username already exists
-            if (jdbcUserDetailsManager.userExists(user.getUsername())) {
-                return new ResponseEntity<>("Username already exists", HttpStatus.BAD_REQUEST);
-            }
-
-            // Create user details
-            UserDetails newUser = User.withUsername(user.getUsername())
-                    .password(passwordEncoder.encode(user.getPassword()))
-                    .roles("WORKER")
-                    .build();
-
-            // Save the new user in the database
-            jdbcUserDetailsManager.createUser(newUser);
-
-            // Return a success response
+            authService.register(user, role);
             return ResponseEntity.ok("User registered successfully");
-
-        } catch (Exception e) {
-            log.error("Error during registration", e);
+        } catch (AuthenticationException e) {
+            log.error("User already exists");
+            return new ResponseEntity<>("User already exists", HttpStatus.FORBIDDEN);
+        }
+        catch (Exception e) {
+            log.error("Error during worker registration");
             return new ResponseEntity<>("Error during registration", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
+    //This is used to login and get a JWT token for authorization
     @PostMapping("/user/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-        Authentication authentication;
-
-        //authenticate the user
+        LoginResponse response;
         try {
-            authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-        } catch (AuthenticationException exception) { //no user found
-            Map<String, Object> map = new HashMap<>();
-            map.put("message", "Bad credential");
-            map.put("status", false);
-            return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
+            response = authService.userLogin(loginRequest);
+        } catch (AuthenticationException e) {
+            return new ResponseEntity<String>("Bad credentials", HttpStatus.NOT_FOUND);
         }
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        //generate the token
-        String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
-
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
-
-        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken);
-
         return ResponseEntity.ok(response);
     }
-
 }

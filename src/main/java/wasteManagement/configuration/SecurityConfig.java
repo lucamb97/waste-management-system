@@ -45,6 +45,7 @@ public class SecurityConfig {
                         authorizeRequests.requestMatchers("/h2-console/**", "v3/api-docs/**").permitAll()
                                 .requestMatchers("/user/**", "/swagger-ui/**").permitAll()
                                 .requestMatchers("/worker/**").hasRole("WORKER")
+                                //TO-DO add
                                 .anyRequest().authenticated());
         http.sessionManagement(
                 session ->
@@ -76,7 +77,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
         return builder.getAuthenticationManager();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {

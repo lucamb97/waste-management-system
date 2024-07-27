@@ -5,13 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 
 @Entity
 @Data
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class Bin {
 
     @Id
