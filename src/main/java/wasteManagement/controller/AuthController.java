@@ -43,7 +43,7 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @PostMapping("/api/register")
+    @PostMapping("/user/register")
     public ResponseEntity<String> register(@RequestBody LoginRequest user) {
         try {
             // Check if the username already exists
@@ -69,13 +69,42 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/api/login")
+    @PostMapping("/admin/registerWorker")
+    public ResponseEntity<String> registerWorker(@RequestBody LoginRequest user) {
+        try {
+            // Check if the username already exists
+            if (jdbcUserDetailsManager.userExists(user.getUsername())) {
+                return new ResponseEntity<>("Username already exists", HttpStatus.BAD_REQUEST);
+            }
+
+            // Create user details
+            UserDetails newUser = User.withUsername(user.getUsername())
+                    .password(passwordEncoder.encode(user.getPassword()))
+                    .roles("WORKER")
+                    .build();
+
+            // Save the new user in the database
+            jdbcUserDetailsManager.createUser(newUser);
+
+            // Return a success response
+            return ResponseEntity.ok("User registered successfully");
+
+        } catch (Exception e) {
+            log.error("Error during registration", e);
+            return new ResponseEntity<>("Error during registration", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @PostMapping("/user/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         Authentication authentication;
+
+        //authenticate the user
         try {
             authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-        } catch (AuthenticationException exception) {
+        } catch (AuthenticationException exception) { //no user found
             Map<String, Object> map = new HashMap<>();
             map.put("message", "Bad credential");
             map.put("status", false);
@@ -85,7 +114,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
+        //generate the token
         String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
 
         List<String> roles = userDetails.getAuthorities().stream()

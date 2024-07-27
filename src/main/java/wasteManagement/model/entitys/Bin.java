@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.springframework.lang.Nullable;
 
 @Entity
 @Data
@@ -38,6 +39,7 @@ public class Bin {
     @Column(name  = "latitude")
     private Float latitude;
 
+    @Nullable
     @Column(name = "associatedUser")
     private String user;
 

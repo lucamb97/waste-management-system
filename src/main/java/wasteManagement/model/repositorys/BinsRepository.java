@@ -18,6 +18,10 @@ public interface BinsRepository extends JpaRepository<Bin, Long> {
     @Query("SELECT b FROM Bin b WHERE b.id = :id")
     Bin findById(@Param("id") long id);
 
+    //This query returns the selected bin from the associated user
+    @Query("SELECT b FROM Bin b WHERE b.user = :user")
+    Bin findByUser(@Param("user") String user);
+
     //This query returns all bins from a selected city
     @Query("SELECT b FROM Bin b WHERE b.city = :city")
     List<Bin> findByCity(@Param("city") String city);

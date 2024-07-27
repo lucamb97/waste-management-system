@@ -43,7 +43,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests.requestMatchers("/h2-console/**", "v3/api-docs/**").permitAll()
-                                .requestMatchers("/api/**", "/swagger-ui/**").permitAll()
+                                .requestMatchers("/user/**", "/swagger-ui/**").permitAll()
+                                .requestMatchers("/worker/**").hasRole("WORKER")
                                 .anyRequest().authenticated());
         http.sessionManagement(
                 session ->

@@ -22,6 +22,10 @@ public class BinService {
         return binsRepository.findById(id);
     }
 
+    public Bin getBinByUser(String user) {
+        return binsRepository.findByUser(user);
+    }
+
     public void addBins(List<Bin> bins){
         binsRepository.saveAll(bins);
     }

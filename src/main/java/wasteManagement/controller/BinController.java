@@ -48,7 +48,7 @@ public class BinController {
     }
 
     // End-point for retrieving a bin by its ID
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<Bin> getBinById(@PathVariable("id") long id) {
         try {
             Bin bin = binService.getBinById(id);
@@ -57,6 +57,23 @@ public class BinController {
                 return new ResponseEntity<>(bin, HttpStatus.OK);
             } else {
                 log.warn("No bins found with id {}" ,id);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // End-point for retrieving a bin by its associated user
+    @GetMapping("/user/{user}")
+    public ResponseEntity<Bin> getBinById(@PathVariable("user") String user) {
+        try {
+            Bin bin = binService.getBinByUser(user);
+            if (bin != null) {
+                log.info("Returning bin with id {}",user);
+                return new ResponseEntity<>(bin, HttpStatus.OK);
+            } else {
+                log.warn("No bins found with id {}" ,user);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
