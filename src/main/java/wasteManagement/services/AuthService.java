@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Service;
 import wasteManagement.configuration.utils.JwtUtils;
-import wasteManagement.model.utils.LoginRequest;
+import wasteManagement.model.utils.RegisterRequest;
 import wasteManagement.model.utils.LoginResponse;
 
 import java.util.List;
@@ -35,13 +35,13 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public LoginResponse userLogin(LoginRequest request) {
+    public LoginResponse userLogin(String username, String password) {
 
         Authentication authentication;
 
         //authenticate the user
         authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -55,7 +55,7 @@ public class AuthService {
         return new LoginResponse(userDetails.getUsername(), roles, jwtToken);
     }
 
-    public void register(LoginRequest request, String role) throws AuthenticationException {
+    public void register(RegisterRequest request, String role) throws AuthenticationException {
         // Check if the username already exists
         if (jdbcUserDetailsManager.userExists(request.getUsername())) {
             throw new AuthenticationException("User already exists") {

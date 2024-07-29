@@ -8,7 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 import wasteManagement.configuration.utils.JwtUtils;
-import wasteManagement.model.utils.LoginRequest;
+import wasteManagement.model.utils.RegisterRequest;
 import wasteManagement.model.utils.LoginResponse;
 import wasteManagement.services.AuthService;
 
@@ -28,7 +28,7 @@ public class AuthController {
 
     //This is used to create a new USER, can be used without authentication
     @PostMapping("/user/register")
-    public ResponseEntity<String> register(@RequestBody LoginRequest user) {
+    public ResponseEntity<String> register(@RequestBody RegisterRequest user) {
         try {
         authService.register(user, "USER");
         return ResponseEntity.ok("User registered successfully");
@@ -44,9 +44,9 @@ public class AuthController {
 
     //This is used to create any other role, can only be used by admins
     @PostMapping("/admin/registerAnyRole")
-    public ResponseEntity<String> registerWorker(@RequestBody LoginRequest user, @RequestParam String role) {
+    public ResponseEntity<String> registerWorker(@RequestBody RegisterRequest user) {
         try {
-            authService.register(user, role);
+            authService.register(user, user.getRole());
             return ResponseEntity.ok("User registered successfully");
         } catch (AuthenticationException e) {
             log.error("User already exists");
@@ -60,10 +60,10 @@ public class AuthController {
 
     //This is used to login and get a JWT token for authorization
     @PostMapping("/user/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@RequestParam String username, @RequestParam String password) {
         LoginResponse response;
         try {
-            response = authService.userLogin(loginRequest);
+            response = authService.userLogin(username, password);
         } catch (AuthenticationException e) {
             return new ResponseEntity<String>("Bad credentials", HttpStatus.NOT_FOUND);
         }
