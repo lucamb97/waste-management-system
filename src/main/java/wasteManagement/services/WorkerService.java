@@ -4,20 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import wasteManagement.model.entitys.Bin;
+import wasteManagement.model.entities.Bin;
 import wasteManagement.model.repositorys.BinsRepository;
 
 import java.util.*;
+
+import static wasteManagement.configuration.utils.Constants.MAX_ROUTE_STOPS;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class WorkerService {
-
-    //this value indicates the maximum number of stops that can be added
-    //to a workers daily work route
-    @Value("${route.max_value}")
-    private int maxRouteStops;
 
     private final BinsRepository binsRepository;
 
@@ -50,7 +47,7 @@ public class WorkerService {
         visited.add(current);
 
 
-        while (visited.size() < bins.size() && route.size() < maxRouteStops) {
+        while (visited.size() < bins.size() && route.size() < MAX_ROUTE_STOPS) {
             Bin nearest = null;
             double minDistance = Double.MAX_VALUE;
             //find the nearest bin
@@ -83,5 +80,3 @@ public class WorkerService {
         return route;
     }
 }
-
-

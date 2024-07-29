@@ -1,4 +1,4 @@
-package wasteManagement.model.entitys;
+package wasteManagement.model.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;

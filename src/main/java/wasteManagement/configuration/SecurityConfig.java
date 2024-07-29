@@ -42,8 +42,8 @@ public class SecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception{
         http
                 .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests.requestMatchers("/h2-console/**", "v3/api-docs/**").permitAll()
-                                .requestMatchers("/user/**", "/swagger-ui/**").permitAll()
+                        authorizeRequests.requestMatchers(  "/swagger-ui/**","v3/api-docs/**").permitAll()
+                                .requestMatchers("/user/**").permitAll()
                                 .requestMatchers("/worker/**").hasRole("WORKER")
                                 //TO-DO add
                                 .anyRequest().authenticated());

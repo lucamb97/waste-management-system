@@ -3,7 +3,7 @@ package wasteManagement.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import wasteManagement.model.entitys.Bin;
+import wasteManagement.model.entities.Bin;
 import wasteManagement.model.repositorys.BinsRepository;
 
 import java.util.List;
@@ -22,13 +22,11 @@ public class BinService {
         return binsRepository.findById(id);
     }
 
-    public Bin getBinByUser(String user) {
+    public List<Bin> getBinByUser(String user) {
         return binsRepository.findByUser(user);
     }
 
-    public void addBins(List<Bin> bins){
-        binsRepository.saveAll(bins);
-    }
+    public void addBins(List<Bin> bins){binsRepository.saveAll(bins);}
 
     public void deleteBins(List<Long> ids) {binsRepository.deleteAllById(ids);}
 }

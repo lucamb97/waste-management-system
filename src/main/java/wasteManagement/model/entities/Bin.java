@@ -1,17 +1,17 @@
-package wasteManagement.model.entitys;
+package wasteManagement.model.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 
 @Entity
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class Bin {
 
     @Id
@@ -48,7 +48,6 @@ public class Bin {
 
     @Column(name = "beingEmptied")
     private Boolean beingEmptied;
-
 
     // Method to calculate distance between two bins
     public double distanceTo(Bin other) {

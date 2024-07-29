@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import wasteManagement.model.entitys.Bin;
+import wasteManagement.model.entities.Bin;
 
 
 import java.util.List;
@@ -20,7 +20,7 @@ public interface BinsRepository extends JpaRepository<Bin, Long> {
 
     //This query returns the selected bin from the associated user
     @Query("SELECT b FROM Bin b WHERE b.user = :user")
-    Bin findByUser(@Param("user") String user);
+    List<Bin> findByUser(@Param("user") String user);
 
     //This query returns all bins from a selected city
     @Query("SELECT b FROM Bin b WHERE b.city = :city")

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @SpringBootApplication
-@EntityScan("wasteManagement.model.entitys")
+@EntityScan("wasteManagement.model.entities")
 public class Main {
 
     public static void main(String[] args) {

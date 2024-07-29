@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import wasteManagement.model.entitys.Bin;
+import wasteManagement.model.entities.Bin;
 import wasteManagement.services.BinService;
 
 import java.util.List;
@@ -26,6 +26,7 @@ public class BinController {
             log.info("New bins saved");
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
+            log.error("Couldn't save bins {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -43,6 +44,7 @@ public class BinController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
+            log.error("Error retrieving bins {}", e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -60,23 +62,25 @@ public class BinController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
+            log.error("Error retrieving bins for id{}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     // End-point for retrieving a bin by its associated user
     @GetMapping("/user/{user}")
-    public ResponseEntity<Bin> getBinById(@PathVariable("user") String user) {
+    public ResponseEntity<List<Bin>> getBinById(@PathVariable("user") String user) {
         try {
-            Bin bin = binService.getBinByUser(user);
-            if (bin != null) {
-                log.info("Returning bin with id {}",user);
-                return new ResponseEntity<>(bin, HttpStatus.OK);
+            List<Bin> bins = binService.getBinByUser(user);
+            if (!bins.isEmpty()) {
+                log.info("Returning bin with user {}",user);
+                return new ResponseEntity<>(bins, HttpStatus.OK);
             } else {
-                log.warn("No bins found with id {}" ,user);
+                log.warn("No bins found with user {}" ,user);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
+            log.error("Error retrieving bins for user {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -89,6 +93,7 @@ public class BinController {
             log.info("Deleted bins");
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (Exception e) {
+            log.error("Error deleting bins {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
             }
