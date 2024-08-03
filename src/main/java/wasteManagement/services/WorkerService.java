@@ -2,7 +2,6 @@ package wasteManagement.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import wasteManagement.model.entities.Bin;
 import wasteManagement.model.repositorys.BinsRepository;

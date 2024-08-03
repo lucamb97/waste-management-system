@@ -42,15 +42,15 @@ public class SecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception{
         http
                 .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests.requestMatchers(  "/swagger-ui/**","v3/api-docs/**").permitAll()
-                                .requestMatchers("/user/**").permitAll()
-                                .requestMatchers("/worker/**").hasRole("WORKER")
-                                //TO-DO add
-                                .anyRequest().authenticated());
+                        authorizeRequests.requestMatchers(  "/swagger-ui/**","v3/api-docs/**","auth/**").permitAll() //everyone can access
+                                .requestMatchers("/user/**").authenticated() //all authenticated users can access
+                                .requestMatchers("/worker/**").hasAnyRole("WORKER", "ADMIN") //only workers and admins can access
+                                .requestMatchers("/admin/**").hasRole("ADMIN") //only admins can access
+                                .anyRequest().authenticated()); //any other request needs any authentication
         http.sessionManagement(
                 session ->
                         session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS)
+                                SessionCreationPolicy.STATELESS) //stateless REST API
         );
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(
                 unauthorizedHandler));
@@ -68,7 +68,6 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(){
-
         JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
         return userDetailsManager;
     }

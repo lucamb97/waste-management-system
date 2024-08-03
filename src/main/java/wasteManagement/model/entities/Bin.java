@@ -10,7 +10,7 @@ import org.springframework.lang.Nullable;
 @Entity
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class Bin {
 
     @Id
@@ -47,6 +47,9 @@ public class Bin {
 
     @Column(name = "beingEmptied")
     private Boolean beingEmptied;
+
+    @Column(name = "status")
+    private String status;
 
     // Method to calculate distance between two bins
     public double distanceTo(Bin other) {

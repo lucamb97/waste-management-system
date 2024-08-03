@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wasteManagement.model.entities.Bin;
+import wasteManagement.services.IssueTracker;
 import wasteManagement.services.WorkerService;
 
 import java.util.List;
@@ -19,6 +20,9 @@ public class WorkerController {
     @Autowired
     private WorkerService workerService;
 
+    @Autowired
+    private IssueTracker issueTracker;
+
     // end-point for getting a list of bins from a city, and plot them through a route
     @GetMapping("/getRoute")
     public ResponseEntity<List<Bin>> getRoute(@RequestParam String city) {
@@ -27,19 +31,33 @@ public class WorkerController {
             log.info("Route for city {} completed", city);
             return new ResponseEntity<>(orderedBins, HttpStatus.OK);
         } catch (Exception e) {
+            log.error("Error creating route {}", e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     //this end-point is used to report that a bin has been emptied
     @PutMapping("/binEmptied")
-    public ResponseEntity<Void> binEmptied(@RequestParam long id) {
+    public ResponseEntity<Void> binEmptied(@RequestParam Long id) {
         try {
             workerService.binEmptied(id);
             log.info("Bin {} emptied", id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
+            log.error("Error emptying bin {}: {}", id, e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/assignIssue")
+    public ResponseEntity<Bin> assignIssue(@RequestParam String worker, Long issueId) {
+        try {
+            Bin issueBin = issueTracker.assignIssue(worker, issueId);
+            log.info("Issue: {} assigned to worker {}", issueId, worker);
+            return new ResponseEntity<>(issueBin, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error assigning issue {} to worker {}: {}",issueId, worker, e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

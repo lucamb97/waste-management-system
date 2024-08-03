@@ -27,7 +27,7 @@ public class AuthController {
     private JwtUtils jwtUtils;
 
     //This is used to create a new USER, can be used without authentication
-    @PostMapping("/user/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest user) {
         try {
         authService.register(user, "USER");
@@ -59,7 +59,7 @@ public class AuthController {
     }
 
     //This is used to login and get a JWT token for authorization
-    @PostMapping("/user/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<?> authenticateUser(@RequestParam String username, @RequestParam String password) {
         LoginResponse response;
         try {

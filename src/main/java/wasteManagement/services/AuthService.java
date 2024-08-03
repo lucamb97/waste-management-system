@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Service;
 import wasteManagement.configuration.utils.JwtUtils;
+import wasteManagement.model.entities.observer.Observer;
 import wasteManagement.model.utils.RegisterRequest;
 import wasteManagement.model.utils.LoginResponse;
 
@@ -34,6 +35,8 @@ public class AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired IssueTracker issueTracker;
 
     public LoginResponse userLogin(String username, String password) {
 
@@ -69,5 +72,10 @@ public class AuthService {
 
         // Save the new user in the database
         jdbcUserDetailsManager.createUser(newUser);
+
+        //add to observers if it's a worker
+        if (role == "WORKER") {
+            issueTracker.addObserver((Observer) newUser);
+        }
     }
 }
