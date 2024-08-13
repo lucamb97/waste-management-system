@@ -1,6 +1,6 @@
 package wasteManagement.model.entities.observer;
 
-import wasteManagement.model.entities.Issue;
+import wasteManagement.model.entities.issues.Issue;
 
 public interface Subject {
     void addObserver(Observer observer);

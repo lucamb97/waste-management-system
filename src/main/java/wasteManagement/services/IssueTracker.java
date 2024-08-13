@@ -5,8 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wasteManagement.model.entities.Bin;
-import wasteManagement.model.entities.Issue;
+import wasteManagement.model.entities.issues.Issue;
 import wasteManagement.model.entities.User;
+import wasteManagement.model.entities.issues.IssueFactory;
 import wasteManagement.model.entities.observer.Observer;
 import wasteManagement.model.entities.observer.Subject;
 import wasteManagement.model.repositorys.BinsRepository;
@@ -29,12 +30,14 @@ public class IssueTracker implements Subject {
     private BinsRepository binsRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private IssueFactory issueFactory;
 
     @PostConstruct
     public void init() {
         List<User> workers = userRepository.findWorkers();
         for (User worker : workers) {
-            addObserver((Observer) worker);
+            addObserver(worker);
         }
 
         log.info("All workers have been added as observers");
@@ -60,8 +63,9 @@ public class IssueTracker implements Subject {
     public void createIssue(IssueRequest request) {
         //make sure the bin exists in the city
         Optional<Bin> bin = binsRepository.findById(request.getBinId());
-        if (bin.get().getCity().equals(request.getCity())) {
-            Issue issue = new Issue();
+        if ((bin.get().getCity()).equals(request.getCity())) {
+            //create the correct issue state
+            Issue issue = issueFactory.createIssue(request.getType());
             issue.setCity(request.getCity());
             issue.setBinId(request.getBinId());
             issue.setCreatedBy(request.getUsername());

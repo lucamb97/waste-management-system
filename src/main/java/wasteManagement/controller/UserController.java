@@ -1,5 +1,6 @@
 package wasteManagement.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,9 @@ public class UserController {
             issueTracker.createIssue(issueRequest);
             log.info("Created issue {}", issueRequest.getDescription());
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (EntityNotFoundException e){
+            log.error("The specified bin is not in this city");
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         } catch (Exception e) {
             log.error("Error creating issue {}: {}",issueRequest.getDescription(), e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

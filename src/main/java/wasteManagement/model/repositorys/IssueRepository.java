@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import wasteManagement.model.entities.Issue;
+import wasteManagement.model.entities.issues.Issue;
 
 @Repository
 public interface IssueRepository extends JpaRepository<Issue, Long> {

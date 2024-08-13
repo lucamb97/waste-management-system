@@ -3,6 +3,7 @@ package wasteManagement.model.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import wasteManagement.model.entities.issues.Issue;
 import wasteManagement.model.entities.observer.Observer;
 
 import java.util.List;
@@ -34,8 +35,8 @@ public class User implements Observer{
     public void update(Issue issue) {
         if (this.city.equals(issue.getCity())) {
             //in a real implementation, this would send a notification to all the workers of the city
-            //one worker would then accept to check o the issue
-            log.info("Worker " + username + " notified of issue in " + city + "for issue id: " + issue.getId());
+            //one worker would then accept to check out the issue
+            log.info("Worker " + username + " notified of issue in " + city + " for issue id: " + issue.getId());
         }
     }
 }

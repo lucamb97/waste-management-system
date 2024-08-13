@@ -1,4 +1,4 @@
-package wasteManagement.model.entities;
+package wasteManagement.model.entities.issues;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -6,11 +6,15 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
+
+//This is the abstract class for the Factory design pattern
 @Data
-@Table(name = "issues")
 @NoArgsConstructor
-public class Issue {
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "issue_state")
+@Table(name = "issues")
+public abstract class Issue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,4 +41,6 @@ public class Issue {
     @Column(name = "resolved", nullable = false)
     private boolean resolved = false;
 
+    // Abstract method that each subclass will implement
+    public abstract void handle();
 }

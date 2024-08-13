@@ -4,8 +4,9 @@ import lombok.Data;
 
 @Data
 public class IssueRequest {
+    private String type;
     private String city;
-    private String Description;
+    private String description;
     private Long binId;
     private String username;
 }

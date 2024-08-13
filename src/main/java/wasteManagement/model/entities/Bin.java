@@ -10,7 +10,7 @@ import org.springframework.lang.Nullable;
 @Entity
 @Data
 @AllArgsConstructor
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class Bin {
 
     @Id
