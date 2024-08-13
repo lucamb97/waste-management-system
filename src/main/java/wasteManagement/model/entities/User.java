@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import wasteManagement.model.entities.observer.Observer;
 
+import java.util.List;
+
 @Slf4j
 @Entity
 @Data
@@ -23,6 +25,9 @@ public class User implements Observer{
 
     @Column(name = "city", nullable = false)
     private String city;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Authority> authorities;
 
     //this is used for the observer design pattern
     @Override

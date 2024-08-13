@@ -1,5 +1,6 @@
 package wasteManagement.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,6 +20,7 @@ public class Authority {
 
     @ManyToOne
     @JoinColumn(name = "username", nullable = false)
+    @JsonBackReference
     private User user;
 
 }

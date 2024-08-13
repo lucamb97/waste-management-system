@@ -20,6 +20,8 @@ import wasteManagement.model.utils.LoginResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static wasteManagement.configuration.utils.Constants.ALLOWED_ROLES;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -64,6 +66,12 @@ public class AuthService {
             throw new AuthenticationException("User already exists") {
             };
         }
+        //Make sure we are trying to add a valid role
+        role = role.toUpperCase();
+        if (!ALLOWED_ROLES.contains(role)){
+            throw new IllegalArgumentException("Role is not valid");
+        }
+
         // Create user details
         UserDetails newUser = User.withUsername(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -74,7 +82,7 @@ public class AuthService {
         jdbcUserDetailsManager.createUser(newUser);
 
         //add to observers if it's a worker
-        if (role == "WORKER") {
+        if (role.equals("WORKER")) {
             issueTracker.addObserver((Observer) newUser);
         }
     }

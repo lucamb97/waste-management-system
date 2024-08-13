@@ -15,6 +15,7 @@ import wasteManagement.services.AuthService;
 
 @Slf4j
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
@@ -27,7 +28,7 @@ public class AuthController {
     private JwtUtils jwtUtils;
 
     //This is used to create a new USER, can be used without authentication
-    @PostMapping("/auth/register")
+    @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest user) {
         try {
         authService.register(user, "USER");
@@ -35,37 +36,23 @@ public class AuthController {
         } catch (AuthenticationException e) {
             log.error("User already exists");
             return new ResponseEntity<>("User already exists", HttpStatus.FORBIDDEN);
-        }
-        catch (Exception e) {
-            log.error("Error during worker registration");
-            return new ResponseEntity<>("Error during registration", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    //This is used to create any other role, can only be used by admins
-    @PostMapping("/admin/registerAnyRole")
-    public ResponseEntity<String> registerWorker(@RequestBody RegisterRequest user) {
-        try {
-            authService.register(user, user.getRole());
-            return ResponseEntity.ok("User registered successfully");
-        } catch (AuthenticationException e) {
-            log.error("User already exists");
-            return new ResponseEntity<>("User already exists", HttpStatus.FORBIDDEN);
-        }
-        catch (Exception e) {
-            log.error("Error during worker registration");
+        } catch (IllegalArgumentException e) {
+            log.error("Error during registration, invalid role");
+            return new ResponseEntity<>("Role is not valid", HttpStatus.FORBIDDEN);
+        } catch (Exception e) {
+            log.error("Error during registration: {}", e.getMessage());
             return new ResponseEntity<>("Error during registration", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     //This is used to login and get a JWT token for authorization
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestParam String username, @RequestParam String password) {
         LoginResponse response;
         try {
             response = authService.userLogin(username, password);
         } catch (AuthenticationException e) {
-            return new ResponseEntity<String>("Bad credentials", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Bad credentials", HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(response);
     }
