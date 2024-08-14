@@ -9,6 +9,6 @@ public class NeedRemovalIssue extends Issue {
 
     @Override
     public void handle() {
-        // Implementation of handling a resolved issue
+        this.setResolved(true);
     }
 }

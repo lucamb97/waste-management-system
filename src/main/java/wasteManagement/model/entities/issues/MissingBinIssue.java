@@ -9,6 +9,6 @@ public class MissingBinIssue extends Issue {
 
     @Override
     public void handle() {
-        // Implementation of handling an in-progress issue
+        this.setResolved(true);
     }
 }

@@ -1,12 +1,13 @@
 package wasteManagement.controller;
 
-
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wasteManagement.model.entities.Bin;
+import wasteManagement.services.IssueHandler;
 import wasteManagement.services.IssueTracker;
 import wasteManagement.services.WorkerService;
 
@@ -22,6 +23,9 @@ public class WorkerController {
 
     @Autowired
     private IssueTracker issueTracker;
+
+    @Autowired
+    private IssueHandler issueHandler;
 
     // end-point for getting a list of bins from a city, and plot them through a route
     @GetMapping("/getRoute")
@@ -49,7 +53,8 @@ public class WorkerController {
         }
     }
 
-    @GetMapping("/assignIssue")
+    //this is the endpoint to accept a received issue
+    @PutMapping("/assignIssue")
     public ResponseEntity<Bin> assignIssue(@RequestParam String worker, Long issueId) {
         try {
             Bin issueBin = issueTracker.assignIssue(worker, issueId);
@@ -60,4 +65,21 @@ public class WorkerController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    //this shows that the issue was handled
+    @GetMapping("/handleIssue")
+    public ResponseEntity<String> handleIssue(@RequestParam long issueId, Boolean fixed){
+        try {
+            issueHandler.handleIssue(issueId, fixed);
+            log.info("Issue: {} handled", issueId);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            log.error("Issue id {} not found", issueId);
+            return new ResponseEntity<>("Issue id not found", HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Error handling issue {}: {} ",issueId, e.getMessage());
+            return new ResponseEntity<>("Couldn't complete issue handling", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

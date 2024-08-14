@@ -8,8 +8,7 @@ import jakarta.persistence.Entity;
 public class BrokenBinIssue extends Issue {
 
     @Override
-    public void handle() {
-        // Implementation of handling an open issue
+    public void handle(){
+        this.setResolved(true);
     }
 }
-

@@ -6,13 +6,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
 //This is the abstract class for the Factory design pattern
 @Data
 @NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "issue_state")
+@DiscriminatorColumn(name = "issue_type")
 @Table(name = "issues")
 public abstract class Issue {
 
@@ -41,6 +40,12 @@ public abstract class Issue {
     @Column(name = "resolved", nullable = false)
     private boolean resolved = false;
 
-    // Abstract method that each subclass will implement
+    public String getIssueType() {
+        // This method should return the discriminator value (e.g., "BROKEN_BIN", "MISSING_BIN")
+        return this.getClass().getAnnotation(DiscriminatorValue.class).value();
+    }
+
+    // Abstract method that each concrete class will implement
+    //to check if the issue was handled correctly
     public abstract void handle();
 }
