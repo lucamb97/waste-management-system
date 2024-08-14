@@ -28,14 +28,18 @@ public class IssueHandler {
             throw new EntityNotFoundException("Couldn't find issue");
         }
         switch (issue.getIssueType()) {
-            case "BROKEN_BIN":
-                brokenBinHandler(issue, fixed);
             case "MISSING_BIN":
                 missingBinHandler(issue);
+                break;
+            case "BROKEN_BIN":
+                brokenBinHandler(issue, fixed);
+                break;
             case "NEED_EMERGENCY_EMPTY":
                 needEmptyHandler(issue);
+                break;
             case "NEED_REMOVAL":
                 needRemovalHandler(issue);
+                break;
         }
         issueRepository.save(issue);
     }
@@ -92,6 +96,7 @@ public class IssueHandler {
         //change the bin to empty
         Bin bin = binsRepository.findById(issue.getBinId()).get();
         bin.setNeedsEmptying(false);
+        bin.setStatus("WORKING");
         binsRepository.save(bin);
         issue.handle();
     }

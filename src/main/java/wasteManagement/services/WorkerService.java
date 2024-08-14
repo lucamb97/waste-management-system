@@ -45,7 +45,7 @@ public class WorkerService {
         route.add(current);
         visited.add(current);
 
-
+        //Algorithm to create the shortest route
         while (visited.size() < bins.size() && route.size() < MAX_ROUTE_STOPS) {
             Bin nearest = null;
             double minDistance = Double.MAX_VALUE;
@@ -59,6 +59,7 @@ public class WorkerService {
                     }
                 }
             }
+            //add bin to the route
             route.add(nearest);
             visited.add(nearest);
             current = nearest;

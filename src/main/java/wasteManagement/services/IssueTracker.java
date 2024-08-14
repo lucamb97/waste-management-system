@@ -62,10 +62,15 @@ public class IssueTracker implements Subject {
     //create and save new issue in db
     public void createIssue(IssueRequest request) {
         //make sure the bin exists in the city
-        Optional<Bin> bin = binsRepository.findById(request.getBinId());
-        if ((bin.get().getCity()).equals(request.getCity())) {
+        Optional<Bin> optionalBin = binsRepository.findById(request.getBinId());
+        Bin bin;
+        if (optionalBin.isPresent()) {
+            bin = optionalBin.get();
+        } else {throw new EntityNotFoundException();}
+
+        if ((bin.getCity()).equals(request.getCity())) {
             //create the correct issue state
-            Issue issue = issueFactory.createIssue(request.getType());
+            Issue issue = issueFactory.createIssue(request.getType(), request.getBinId());
             issue.setCity(request.getCity());
             issue.setBinId(request.getBinId());
             issue.setCreatedBy(request.getUsername());
@@ -76,8 +81,9 @@ public class IssueTracker implements Subject {
             log.info("Issue created in city {} for bin: {}", request.getCity(), request.getBinId());
             //notify the workers
             notifyObservers(issue);
+        } else {
+            throw new EntityNotFoundException();
         }
-        else{ throw new EntityNotFoundException();}
     }
 
     //Assign an issue to a worker and return the issueBin

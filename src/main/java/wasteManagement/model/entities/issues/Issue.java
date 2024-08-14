@@ -41,7 +41,7 @@ public abstract class Issue {
     private boolean resolved = false;
 
     public String getIssueType() {
-        // This method should return the discriminator value (e.g., "BROKEN_BIN", "MISSING_BIN")
+        //This method should return the discriminator value
         return this.getClass().getAnnotation(DiscriminatorValue.class).value();
     }
 

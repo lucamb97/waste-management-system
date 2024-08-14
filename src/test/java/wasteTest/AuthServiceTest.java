@@ -49,10 +49,6 @@ public class AuthServiceTest {
     private AuthorityRepository authorityRepository;
     @Mock
     private UserRepository userRepository;
-    @BeforeEach
-    void setUp() {
-        // Initialize mocks
-    }
 
     @Test
     void testUserLogin_Success() {
@@ -68,10 +64,9 @@ public class AuthServiceTest {
         when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(authentication);
         when(jwtUtils.generateTokenFromUsername(userDetails)).thenReturn("jwtToken");
 
-        // Act
         LoginResponse response = authService.userLogin(username, password);
 
-        // Assert
+        //Verify the successful login
         assertEquals(username, response.getUsername());
         assertTrue(response.getRoles().contains("ROLE_USER"));
         assertEquals("jwtToken", response.getJwtToken());
@@ -81,21 +76,21 @@ public class AuthServiceTest {
 
     @Test
     void testUserLogin_Failure() {
-        // Arrange
+        //Setup mocks
         String username = "user1";
         String password = "wrongPassword";
 
         when(authenticationManager.authenticate(any(Authentication.class)))
                 .thenThrow(new BadCredentialsException("Invalid credentials"));
 
-        // Act & Assert
+        //Verify the exception is thrown
         assertThrows(BadCredentialsException.class, () -> authService.userLogin(username, password));
         verify(authenticationManager, times(1)).authenticate(any(Authentication.class));
     }
 
     @Test
     void testRegister_Success() throws AuthenticationException {
-        // Arrange
+        //Setup mocks
         RegisterRequest request = new RegisterRequest();
         request.setUsername("user1");
         request.setPassword("password");
@@ -105,9 +100,9 @@ public class AuthServiceTest {
         when(jdbcUserDetailsManager.userExists(request.getUsername())).thenReturn(false);
         when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
 
-        // Act
-        authService.register(request, request.getRole());
 
+        authService.register(request, request.getRole());
+        //Verify the successful registration
         verify(userRepository, times(1)).save(any(UserInfo.class));
         verify(authorityRepository, times(1)).save(any(Authority.class));
         verify(issueTracker, times(1)).addObserver(any(UserInfo.class));
@@ -125,7 +120,7 @@ public class AuthServiceTest {
 
         when(jdbcUserDetailsManager.userExists(request.getUsername())).thenReturn(true);
 
-        // Act & Assert
+        //Verify the exception is thrown
         assertThrows(AuthenticationException.class, () -> authService.register(request, request.getRole()));
         verify(userRepository, never()).save(any(UserInfo.class));
         verify(authorityRepository, never()).save(any(Authority.class));
@@ -140,7 +135,7 @@ public class AuthServiceTest {
         request.setRole("INVALID_ROLE");
         request.setCity("TestCity");
 
-        // Act & Assert
+        //Verify the exception is thrown
         assertThrows(IllegalArgumentException.class, () -> authService.register(request, request.getRole()));
         verify(userRepository, never()).save(any(UserInfo.class));
         verify(authorityRepository, never()).save(any(Authority.class));

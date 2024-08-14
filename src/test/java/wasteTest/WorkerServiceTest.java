@@ -25,7 +25,6 @@ class WorkerServiceTest {
 
     @Mock
     private BinsRepository binsRepository;
-
     @InjectMocks
     private WorkerService workerService;
 
