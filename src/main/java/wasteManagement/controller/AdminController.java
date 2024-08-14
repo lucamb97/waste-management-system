@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
-import wasteManagement.model.entities.User;
+import wasteManagement.model.entities.UserInfo;
 import wasteManagement.model.utils.RegisterRequest;
 import wasteManagement.services.AdminService;
 import wasteManagement.services.AuthService;
@@ -44,9 +44,9 @@ public class AdminController {
 
     //Used to get info of all users
     @GetMapping("/getAllUsersInfo")
-    public ResponseEntity<List<User>> getALlUsers() {
+    public ResponseEntity<List<UserInfo>> getALlUsers() {
         try {
-            List<User> users = adminService.getAllUsers();
+            List<UserInfo> users = adminService.getAllUsers();
             return new ResponseEntity<>(users, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             log.error("Could not find any users");
@@ -57,6 +57,7 @@ public class AdminController {
         }
     }
 
+    //Used to get all user roles
     @GetMapping("/getUserRoles")
     public ResponseEntity<List<String>> getUserRoles (@RequestParam String username) {
         try {

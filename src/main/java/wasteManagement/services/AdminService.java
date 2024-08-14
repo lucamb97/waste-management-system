@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Service;
 import wasteManagement.model.entities.Authority;
-import wasteManagement.model.entities.User;
+import wasteManagement.model.entities.UserInfo;
 import wasteManagement.model.entities.observer.Observer;
 import wasteManagement.model.repositorys.AuthorityRepository;
 import wasteManagement.model.repositorys.UserRepository;
@@ -32,8 +32,8 @@ public class AdminService {
     @Autowired
     private IssueTracker issueTracker;
 
-    public List<User> getAllUsers() throws ObjectNotFoundException {
-        List<User> users = userRepository.findAll();
+    public List<UserInfo> getAllUsers() throws ObjectNotFoundException {
+        List<UserInfo> users = userRepository.findAll();
 
         if (users.isEmpty()) {
             throw new NoSuchElementException();
@@ -62,7 +62,7 @@ public class AdminService {
         }
 
         //Check if the user exists
-        User user = userRepository.findById(username).orElseThrow(() -> new NoSuchElementException("User not found"));
+        UserInfo user = userRepository.findById(username).orElseThrow(() -> new NoSuchElementException("User not found"));
 
         // Check if the new role is already assigned
         List<String> roles = getUserRoles(username);
@@ -79,7 +79,7 @@ public class AdminService {
 
         // If the new role is WORKER, add the user to issue observers
         if ("WORKER".equals(newRole)) {
-            issueTracker.addObserver((Observer) user);
+            issueTracker.addObserver(user);
         }
 
 
@@ -95,7 +95,7 @@ public class AdminService {
         }
 
         //Check if the user exists
-        User user = userRepository.findById(username).orElseThrow(() -> new NoSuchElementException("User not found"));
+        UserInfo user = userRepository.findById(username).orElseThrow(() -> new NoSuchElementException("User not found"));
 
         // Check if the user has more than 1 role
         List<String> roles = getUserRoles(username);
@@ -108,7 +108,7 @@ public class AdminService {
 
         // If role is WORKER,remove the user from the issue observers
         if ("WORKER".equals(role)) {
-            issueTracker.removeObserver((Observer) user);
+            issueTracker.removeObserver(user);
         }
 
     }

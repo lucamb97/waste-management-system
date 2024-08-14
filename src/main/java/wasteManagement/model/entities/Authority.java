@@ -21,7 +21,7 @@ public class Authority {
     @ManyToOne
     @JoinColumn(name = "username", nullable = false)
     @JsonBackReference
-    private User user;
+    private UserInfo user;
 
 }
 

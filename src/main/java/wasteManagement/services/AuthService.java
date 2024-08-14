@@ -7,13 +7,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Service;
 import wasteManagement.configuration.utils.JwtUtils;
-import wasteManagement.model.entities.observer.Observer;
+import wasteManagement.model.entities.Authority;
+import wasteManagement.model.entities.UserInfo;
+import wasteManagement.model.repositorys.AuthorityRepository;
+import wasteManagement.model.repositorys.UserRepository;
 import wasteManagement.model.utils.RegisterRequest;
 import wasteManagement.model.utils.LoginResponse;
 
@@ -28,15 +30,16 @@ public class AuthService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
     @Autowired
     private JwtUtils jwtUtils;
-
     @Autowired
     private JdbcUserDetailsManager jdbcUserDetailsManager;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private AuthorityRepository authorityRepository;
 
     @Autowired IssueTracker issueTracker;
 
@@ -72,18 +75,25 @@ public class AuthService {
             throw new IllegalArgumentException("Role is not valid");
         }
 
-        // Create user details
-        UserDetails newUser = User.withUsername(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .roles(role)
-                .build();
+        // Create user entity
+        UserInfo newUser = new UserInfo();
+        newUser.setUsername(request.getUsername());
+        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        newUser.setCity(request.getCity());
+        newUser.setEnabled(true);
 
-        // Save the new user in the database
-        jdbcUserDetailsManager.createUser(newUser);
+        // Create authority entity
+        Authority authority = new Authority();
+        authority.setAuthority("ROLE_" + role);
+        authority.setUser(newUser);
 
-        //add to observers if it's a worker
+        // Save in the database
+        userRepository.save(newUser);
+        authorityRepository.save(authority);
+
+        // Add to observers if it's a worker
         if (role.equals("WORKER")) {
-            issueTracker.addObserver((Observer) newUser);
+            issueTracker.addObserver(newUser);
         }
     }
 }

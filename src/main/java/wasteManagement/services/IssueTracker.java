@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wasteManagement.model.entities.Bin;
 import wasteManagement.model.entities.issues.Issue;
-import wasteManagement.model.entities.User;
+import wasteManagement.model.entities.UserInfo;
 import wasteManagement.model.entities.issues.IssueFactory;
 import wasteManagement.model.entities.observer.Observer;
 import wasteManagement.model.entities.observer.Subject;
@@ -35,8 +35,8 @@ public class IssueTracker implements Subject {
 
     @PostConstruct
     public void init() {
-        List<User> workers = userRepository.findWorkers();
-        for (User worker : workers) {
+        List<UserInfo> workers = userRepository.findWorkers();
+        for (UserInfo worker : workers) {
             addObserver(worker);
         }
 

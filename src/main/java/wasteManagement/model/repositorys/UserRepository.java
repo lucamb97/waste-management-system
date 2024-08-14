@@ -6,15 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import wasteManagement.model.entities.User;
+import wasteManagement.model.entities.UserInfo;
 
 import java.util.List;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<UserInfo, String> {
 
     @Query("SELECT u FROM User u JOIN Authority a ON a.user.username = u.username WHERE a.authority = 'ROLE_WORKER'")
-    List<User> findWorkers();
+    List<UserInfo> findWorkers();
 
     @Modifying
     @Transactional

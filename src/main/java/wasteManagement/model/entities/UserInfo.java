@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "users")
-public class User implements Observer{
+public class UserInfo implements Observer{
 
     @Id
     @Column(name = "username", length = 50, nullable = false)
