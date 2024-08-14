@@ -13,11 +13,11 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<UserInfo, String> {
 
-    @Query("SELECT u FROM User u JOIN Authority a ON a.user.username = u.username WHERE a.authority = 'ROLE_WORKER'")
+    @Query("SELECT u FROM UserInfo u JOIN Authority a ON a.user.username = u.username WHERE a.authority = 'ROLE_WORKER'")
     List<UserInfo> findWorkers();
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM User u WHERE u.username = :username")
+    @Query("DELETE FROM UserInfo u WHERE u.username = :username")
     void deleteUser(@Param("username") String username);
 }
