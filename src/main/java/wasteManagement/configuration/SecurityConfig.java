@@ -29,7 +29,6 @@ public class SecurityConfig {
 
     @Autowired
     DataSource dataSource;
-
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 

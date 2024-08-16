@@ -20,10 +20,8 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
-
     @Autowired
     private UserDetailsService userDetailsService;
-
     @Autowired
     private JwtUtils jwtUtils;
 
@@ -46,7 +44,7 @@ public class AuthController {
     }
 
     //This is used to login and get a JWT token for authorization
-    @PostMapping("/login")
+    @GetMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestParam String username, @RequestParam String password) {
         LoginResponse response;
         try {

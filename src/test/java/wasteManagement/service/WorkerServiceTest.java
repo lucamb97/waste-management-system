@@ -1,4 +1,4 @@
-package wasteTest;
+package wasteManagement.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

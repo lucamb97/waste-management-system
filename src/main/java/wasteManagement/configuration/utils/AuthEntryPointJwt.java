@@ -20,6 +20,7 @@ import java.util.Map;
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
+    //This is the method called when AuthenticationException is thrown.
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {

@@ -20,10 +20,8 @@ public class WorkerController {
 
     @Autowired
     private WorkerService workerService;
-
     @Autowired
     private IssueTracker issueTracker;
-
     @Autowired
     private IssueHandler issueHandler;
 

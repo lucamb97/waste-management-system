@@ -63,40 +63,43 @@ public class IssueTracker implements Subject {
     public void createIssue(IssueRequest request) {
         //make sure the bin exists in the city
         Optional<Bin> optionalBin = binsRepository.findById(request.getBinId());
-        Bin bin;
+        Bin bin = null;
         if (optionalBin.isPresent()) {
             bin = optionalBin.get();
-        } else {throw new EntityNotFoundException();}
 
-        if ((bin.getCity()).equals(request.getCity())) {
-            //create the correct issue state
-            Issue issue = issueFactory.createIssue(request.getType(), request.getBinId());
-            issue.setCity(request.getCity());
-            issue.setBinId(request.getBinId());
-            issue.setCreatedBy(request.getUsername());
-            issue.setIssueDescription(request.getDescription());
-            issue.setCreatedAt(LocalDateTime.now());
-            //save the issue
-            issueRepository.save(issue);
-            log.info("Issue created in city {} for bin: {}", request.getCity(), request.getBinId());
-            //notify the workers
-            notifyObservers(issue);
+            if ((bin.getCity()).equals(request.getCity())) {
+                //create the correct issue state
+                Issue issue = issueFactory.createIssue(request.getType(), request.getBinId());
+                issue.setCity(request.getCity());
+                issue.setBinId(request.getBinId());
+                issue.setCreatedBy(request.getUsername());
+                issue.setIssueDescription(request.getDescription());
+                issue.setCreatedAt(LocalDateTime.now());
+                //save the issue
+                issueRepository.save(issue);
+                log.info("Issue created in city {} for bin: {}", request.getCity(), request.getBinId());
+                //notify the workers
+                notifyObservers(issue);
+            } else {
+                throw new EntityNotFoundException();
+            }
         } else {
-            throw new EntityNotFoundException();
-        }
+            throw new EntityNotFoundException();}
     }
 
     //Assign an issue to a worker and return the issueBin
     public Bin assignIssue(String worker, Long issueId) {
-        // Assign the issue to the worker
+        //Retrieve the issue
+        Issue issue = issueRepository.findById(issueId)
+                .orElseThrow(() -> new EntityNotFoundException("Issue not found with id: " + issueId));
+
+        //Retrieve the bin for that issue
+        Bin bin = binsRepository.findById(issue.getBinId())
+                .orElseThrow(() -> new EntityNotFoundException("Bin not found with id: " + issue.getBinId()));
+
+        //Assign the issue to the worker
         issueRepository.assignIssueToWorker(worker, issueId);
-        // Retrieve the updated issue
-        Optional<Issue> issue = issueRepository.findById(issueId);
-        // retrieve the issue bin
-        Optional<Bin> issueBin = binsRepository.findById(issue.get().getBinId());
 
-        return issueBin.get();
+        return bin;
     }
-
-
 }

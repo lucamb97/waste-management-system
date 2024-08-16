@@ -17,6 +17,7 @@ import wasteManagement.services.IssueTracker;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
     @Autowired
     private IssueTracker issueTracker;
 

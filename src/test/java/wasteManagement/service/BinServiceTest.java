@@ -1,4 +1,4 @@
-package wasteTest;
+package wasteManagement.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -15,6 +15,7 @@ import wasteManagement.services.BinService;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class BinServiceTest {
@@ -58,9 +59,9 @@ public class BinServiceTest {
     @Test
     void testGetBinById() {
         //Setup mocks
-        when(binsRepository.findById(1L)).thenReturn(bin1);
+        when(binsRepository.findById(1L)).thenReturn(Optional.of(bin1));
 
-        Bin bin = binService.getBinById(1L);
+        Bin bin = binService.getBinById(1L).get();
         //verifications
         assertNotNull(bin);
         assertEquals(1L, bin.getId());

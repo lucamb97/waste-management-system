@@ -8,6 +8,7 @@ import wasteManagement.model.entities.Bin;
 import wasteManagement.model.repositorys.BinsRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class BinService {
         return binsRepository.findByCity(city);
     }
 
-    public Bin getBinById(long id) {return binsRepository.findById(id);}
+    public Optional<Bin> getBinById(long id) {return binsRepository.findById(id);}
 
     public List<Bin> getBinByUser(String user) {return binsRepository.findByUser(user);}
 

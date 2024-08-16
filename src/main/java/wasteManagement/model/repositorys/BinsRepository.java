@@ -14,9 +14,6 @@ import java.util.List;
 @Repository
 public interface BinsRepository extends JpaRepository<Bin, Long> {
 
-    //This query returns the selected bin from id
-    @Query("SELECT b FROM Bin b WHERE b.id = :id")
-    Bin findById(@Param("id") long id);
 
     //This query returns the selected bin from the associated user
     @Query("SELECT b FROM Bin b WHERE b.user = :user")

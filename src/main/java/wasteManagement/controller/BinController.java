@@ -9,6 +9,7 @@ import wasteManagement.model.entities.Bin;
 import wasteManagement.services.BinService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -53,10 +54,10 @@ public class BinController {
     @GetMapping("/id/{id}")
     public ResponseEntity<Bin> getBinById(@PathVariable("id") long id) {
         try {
-            Bin bin = binService.getBinById(id);
-            if (bin != null) {
+            Optional<Bin> bin = binService.getBinById(id);
+            if (bin.isPresent()) {
                 log.info("Returning bin with id {}",id);
-                return new ResponseEntity<>(bin, HttpStatus.OK);
+                return new ResponseEntity<>(bin.get(), HttpStatus.OK);
             } else {
                 log.warn("No bins found with id {}" ,id);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);

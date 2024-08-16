@@ -81,7 +81,7 @@ public class AdminController {
             return new ResponseEntity<>("Role added to user", HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.error("Invalid role provided");
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Invalid role provided", HttpStatus.BAD_REQUEST);
         } catch (NoSuchElementException e) {
             log.error("Could not find user");
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
@@ -118,7 +118,7 @@ public class AdminController {
             return new ResponseEntity<>("User deleted", HttpStatus.OK);
         } catch (NoSuchElementException e) {
             log.error("Could not find any users");
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Could not find any users", HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             log.error("Error trying to delete user: {}", e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
