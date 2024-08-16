@@ -110,7 +110,7 @@ public class AuthControllerTest {
 
         when(authService.userLogin("testuser", "password")).thenReturn(loginResponse);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.get("/auth/login")
                         .param("username", "testuser")
                         .param("password", "password"))
                 .andExpect(status().isOk())
@@ -122,7 +122,7 @@ public class AuthControllerTest {
         doThrow(new AuthenticationException("Bad credentials") {}).when(authService)
                 .userLogin(anyString(), anyString());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.get("/auth/login")
                         .param("username", "testuser")
                         .param("password", "wrongpassword"))
                 .andExpect(status().isNotFound())
