@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wasteManagement.model.entities.Bin;
-import wasteManagement.services.IssueHandler;
 import wasteManagement.services.IssueTracker;
 import wasteManagement.services.WorkerService;
 
@@ -22,8 +21,6 @@ public class WorkerController {
     private WorkerService workerService;
     @Autowired
     private IssueTracker issueTracker;
-    @Autowired
-    private IssueHandler issueHandler;
 
     // end-point for getting a list of bins from a city, and plot them through a route
     @GetMapping("/getRoute")
@@ -68,7 +65,7 @@ public class WorkerController {
     @GetMapping("/handleIssue")
     public ResponseEntity<String> handleIssue(@RequestParam long issueId, Boolean fixed){
         try {
-            issueHandler.handleIssue(issueId, fixed);
+            issueTracker.handleIssue(issueId, fixed);
             log.info("Issue: {} handled", issueId);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (EntityNotFoundException e) {

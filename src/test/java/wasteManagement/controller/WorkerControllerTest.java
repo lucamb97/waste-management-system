@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import wasteManagement.model.entities.Bin;
-import wasteManagement.services.IssueHandler;
 import wasteManagement.services.IssueTracker;
 import wasteManagement.services.WorkerService;
 
@@ -34,8 +33,6 @@ public class WorkerControllerTest {
     private WorkerService workerService;
     @MockBean
     private IssueTracker issueTracker;
-    @MockBean
-    private IssueHandler issueHandler;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -150,13 +147,13 @@ public class WorkerControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        verify(issueHandler, times(1)).handleIssue(1L, true);
+        verify(issueTracker, times(1)).handleIssue(1L, true);
     }
 
     @Test
     @WithMockUser(roles = "WORKER")
     public void testHandleIssue_NotFound() throws Exception {
-        doThrow(new EntityNotFoundException()).when(issueHandler).handleIssue(1L, true);
+        doThrow(new EntityNotFoundException()).when(issueTracker).handleIssue(1L, true);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/worker/handleIssue")
                         .param("issueId", "1")
@@ -165,13 +162,13 @@ public class WorkerControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().string("Issue id not found"));
 
-        verify(issueHandler, times(1)).handleIssue(1L, true);
+        verify(issueTracker, times(1)).handleIssue(1L, true);
     }
 
     @Test
     @WithMockUser(roles = "WORKER")
     public void testHandleIssue_Error() throws Exception {
-        doThrow(new RuntimeException("Error")).when(issueHandler).handleIssue(1L, true);
+        doThrow(new RuntimeException("Error")).when(issueTracker).handleIssue(1L, true);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/worker/handleIssue")
                         .param("issueId", "1")
@@ -180,6 +177,6 @@ public class WorkerControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.content().string("Couldn't complete issue handling"));
 
-        verify(issueHandler, times(1)).handleIssue(1L, true);
+        verify(issueTracker, times(1)).handleIssue(1L, true);
     }
 }

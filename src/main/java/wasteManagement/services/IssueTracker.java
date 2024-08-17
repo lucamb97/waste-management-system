@@ -40,6 +40,7 @@ public class IssueTracker implements Subject {
 
         log.info("All workers have been added as observers");
     }
+
     @Override
     public void addObserver(Observer observer) {
         observers.add(observer);
@@ -82,7 +83,8 @@ public class IssueTracker implements Subject {
                 throw new EntityNotFoundException();
             }
         } else {
-            throw new EntityNotFoundException();}
+            throw new EntityNotFoundException();
+        }
     }
 
     //Assign an issue to a worker and return the issueBin
@@ -99,5 +101,18 @@ public class IssueTracker implements Subject {
         issueRepository.assignIssueToWorker(worker, issueId);
 
         return bin;
+    }
+
+    public void handleIssue(Long issueId, Boolean fixed) {
+        Optional<Issue> optionalIssue = issueRepository.findById(issueId);
+        Issue issue;
+        if (optionalIssue.isPresent()) {
+            issue = optionalIssue.get();
+            issue.handle(binsRepository, issueRepository, issueFactory, fixed);
+            issueRepository.save(issue);
+        } else {
+            throw new EntityNotFoundException("Couldn't find issue");
+
+        }
     }
 }

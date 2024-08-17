@@ -3,6 +3,8 @@ package wasteManagement.model.entities.issues;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import wasteManagement.model.repositorys.BinsRepository;
+import wasteManagement.model.repositorys.IssueRepository;
 
 import java.time.LocalDateTime;
 
@@ -47,5 +49,5 @@ public abstract class Issue {
 
     // Abstract method that each concrete class will implement
     //to check if the issue was handled correctly
-    public abstract void handle();
+    public abstract void handle(BinsRepository binsRepository, IssueRepository issueRepository, IssueFactory issueFactory, Boolean fixed);
 }
