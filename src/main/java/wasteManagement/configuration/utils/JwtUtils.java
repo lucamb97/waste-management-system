@@ -34,6 +34,7 @@ public class JwtUtils {
         return null;
     }
 
+    //generate a new valid jwt token
     public String generateTokenFromUsername(UserDetails userDetails){
         String  username = userDetails.getUsername();
         return Jwts.builder()
@@ -44,6 +45,7 @@ public class JwtUtils {
                 .compact();
     }
 
+    // get the username from a token
     public String getUsernameFromJwtToken(String token){
         return Jwts.parser()
                 .verifyWith((SecretKey) key())
@@ -55,6 +57,7 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
+    //Validate a token
     public boolean validateJwtToken(String authToken) {
         try {
             log.info("Validation - START");

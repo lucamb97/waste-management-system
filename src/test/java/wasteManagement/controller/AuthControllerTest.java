@@ -65,7 +65,7 @@ public class AuthControllerTest {
     @Test
     public void testRegister_UserAlreadyExists() throws Exception {
         RegisterRequest registerRequest = new RegisterRequest("testuser", "password", "USER", "New York");
-
+        //Trow the exception
         doThrow(new AuthenticationException("User already exists") {}).when(authService)
                 .register(any(RegisterRequest.class), anyString());
 
@@ -79,7 +79,7 @@ public class AuthControllerTest {
     @Test
     public void testRegister_InvalidRole() throws Exception {
         RegisterRequest registerRequest = new RegisterRequest("testuser", "password", "INVALID_ROLE", "New York");
-
+        //Throw the exception
         doThrow(new IllegalArgumentException("Role is not valid")).when(authService)
                 .register(any(RegisterRequest.class), anyString());
 
@@ -93,7 +93,7 @@ public class AuthControllerTest {
     @Test
     public void testRegister_UnexpectedError() throws Exception {
         RegisterRequest registerRequest = new RegisterRequest("testuser", "password", "USER", "New York");
-
+        //Throw the exception
         doThrow(new RuntimeException("Unexpected error")).when(authService)
                 .register(any(RegisterRequest.class), anyString());
 
@@ -107,7 +107,7 @@ public class AuthControllerTest {
     @Test
     public void testAuthenticateUser_Success() throws Exception {
         LoginResponse loginResponse = new LoginResponse("username", Collections.singletonList("USER"),"token");
-
+        //Mock the method
         when(authService.userLogin("testuser", "password")).thenReturn(loginResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/auth/login")
@@ -119,6 +119,7 @@ public class AuthControllerTest {
 
     @Test
     public void testAuthenticateUser_BadCredentials() throws Exception {
+        //Throw the exception
         doThrow(new AuthenticationException("Bad credentials") {}).when(authService)
                 .userLogin(anyString(), anyString());
 

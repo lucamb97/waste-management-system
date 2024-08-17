@@ -72,7 +72,7 @@ public class WorkerController {
             log.info("Issue: {} handled", issueId);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
-            log.error("Issue id {} not found", issueId);
+            log.warn("Issue id {} not found", issueId);
             return new ResponseEntity<>("Issue id not found", HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             log.error("Error handling issue {}: {} ",issueId, e.getMessage());

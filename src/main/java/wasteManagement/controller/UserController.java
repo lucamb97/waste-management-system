@@ -29,7 +29,7 @@ public class UserController {
             log.info("Created issue {}", issueRequest.getDescription());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException e){
-            log.error("The specified bin is not in this city");
+            log.warn("The specified bin is not in this city");
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         } catch (Exception e) {
             log.error("Error creating issue {}: {}",issueRequest.getDescription(), e.getMessage());

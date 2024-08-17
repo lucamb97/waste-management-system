@@ -30,9 +30,10 @@ public class AuthController {
     public ResponseEntity<String> register(@RequestBody RegisterRequest user) {
         try {
         authService.register(user, "USER");
+        log.info("User: {} registered successfully", user.getUsername());
         return ResponseEntity.ok("User registered successfully");
         } catch (AuthenticationException e) {
-            log.error("User already exists");
+            log.warn("User already exists");
             return new ResponseEntity<>("User already exists", HttpStatus.FORBIDDEN);
         } catch (IllegalArgumentException e) {
             log.error("Error during registration, invalid role");
@@ -49,7 +50,9 @@ public class AuthController {
         LoginResponse response;
         try {
             response = authService.userLogin(username, password);
+            log.info("user: {} logged in",username);
         } catch (AuthenticationException e) {
+            log.warn("Login with bad credentials");
             return new ResponseEntity<>("Bad credentials", HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(response);

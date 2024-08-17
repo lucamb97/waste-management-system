@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import wasteManagement.model.entities.Bin;
 import wasteManagement.model.entities.issues.Issue;
-import wasteManagement.model.entities.issues.MissingBinIssue;
+import wasteManagement.model.entities.issues.IssueFactory;
 import wasteManagement.model.repositorys.BinsRepository;
 import wasteManagement.model.repositorys.IssueRepository;
 
@@ -18,6 +18,8 @@ public class IssueHandler {
     private BinsRepository binsRepository;
     @Autowired
     private IssueRepository issueRepository;
+    @Autowired
+    private IssueFactory issueFactory;
 
     public void handleIssue(long issueId, Boolean fixed) {
         Optional<Issue> optionalIssue = issueRepository.findById(issueId);
@@ -45,7 +47,7 @@ public class IssueHandler {
     }
 
     @Transactional
-    public void brokenBinHandler(Issue issue, Boolean fixed){
+    private void brokenBinHandler(Issue issue, Boolean fixed){
         //With a broken bin we simply change the bin status to WORKING after it is fixed
         //Or we delete the bin if it can't be fixed
 
@@ -65,13 +67,12 @@ public class IssueHandler {
 
             //issue converts the broken bin issue into a missing bin issue
             //Create a new MissingBinIssue and copy properties
-            MissingBinIssue missingBinIssue = new MissingBinIssue();
-            missingBinIssue.setBinId(issue.getBinId());
-            missingBinIssue.setCity(issue.getCity());
+            Issue missingBinIssue = issueFactory.createIssue("MISSING_BIN", issue.getBinId());
+            missingBinIssue.setId(issue.getId());
             missingBinIssue.setIssueDescription(issue.getIssueDescription());
+            missingBinIssue.setCity(issue.getCity());
             missingBinIssue.setCreatedBy(issue.getCreatedBy());
-            missingBinIssue.setCreatedAt(issue.getCreatedAt());
-            missingBinIssue.setResolved(issue.isResolved());
+            missingBinIssue.setAssignedWorker(issue.getAssignedWorker());
 
             //Delete the old BrokenBinIssue
             issueRepository.delete(issue);
@@ -82,7 +83,7 @@ public class IssueHandler {
     }
 
     @Transactional
-    public void missingBinHandler(Issue issue) {
+    private void missingBinHandler(Issue issue) {
         //if it was fixed the front-end should have added the new bin to the db
         //check if it was added
         Bin bin = binsRepository.findById(issue.getBinId()).get();
@@ -92,7 +93,7 @@ public class IssueHandler {
     }
 
     @Transactional
-    public void needEmptyHandler(Issue issue) {
+    private void needEmptyHandler(Issue issue) {
         //change the bin to empty
         Bin bin = binsRepository.findById(issue.getBinId()).get();
         bin.setNeedsEmptying(false);
@@ -102,7 +103,7 @@ public class IssueHandler {
     }
 
     @Transactional
-    public void needRemovalHandler(Issue issue) {
+    private void needRemovalHandler(Issue issue) {
         // remove the bin
         binsRepository.deleteById(issue.getBinId());
         issue.handle();

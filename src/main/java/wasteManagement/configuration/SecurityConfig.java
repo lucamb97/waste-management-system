@@ -28,7 +28,7 @@ import javax.sql.DataSource;
 public class SecurityConfig {
 
     @Autowired
-    DataSource dataSource;
+    protected DataSource dataSource;
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
