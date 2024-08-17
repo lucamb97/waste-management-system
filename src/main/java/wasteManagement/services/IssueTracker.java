@@ -16,14 +16,12 @@ import wasteManagement.model.repositorys.UserRepository;
 import wasteManagement.model.utils.IssueRequest;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @Service
 public class IssueTracker implements Subject {
-    private List<Observer> observers = new ArrayList<>();
     @Autowired
     private IssueRepository issueRepository;
     @Autowired
