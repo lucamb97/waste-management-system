@@ -25,9 +25,13 @@ public class IssueHandlerTest {
     private BinsRepository binsRepository;
     @Mock
     private IssueRepository issueRepository;
+    @Mock
+    private IssueFactory issueFactory;
     @InjectMocks
     private IssueHandler issueHandler;
 
+
+    private MissingBinIssue missingBinIssue;
     private BrokenBinIssue brokenBinIssue;
     private Bin bin;
 
@@ -37,6 +41,10 @@ public class IssueHandlerTest {
         brokenBinIssue.setId(1L);
         brokenBinIssue.setBinId(1L);
         brokenBinIssue.setCity("TestCity");
+        missingBinIssue = new MissingBinIssue();
+        missingBinIssue.setId(1L);
+        missingBinIssue.setBinId(1L);
+        missingBinIssue.setCity("TestCity");
 
         bin = new Bin();
         bin.setId(1L);
@@ -61,6 +69,7 @@ public class IssueHandlerTest {
     void testHandleIssue_BrokenBinNotFixed() {
         //Setup mocks
         when(issueRepository.findById(1L)).thenReturn(Optional.of(brokenBinIssue));
+        when(issueFactory.createIssue("MISSING_BIN", brokenBinIssue.getBinId())).thenReturn(missingBinIssue);
 
         issueHandler.handleIssue(1L, false);
         //Verifications
@@ -72,10 +81,6 @@ public class IssueHandlerTest {
     @Test
     void testHandleIssue_MissingBinHandler() {
         //Setup mocks
-        MissingBinIssue missingBinIssue = new MissingBinIssue();
-        missingBinIssue.setId(1L);
-        missingBinIssue.setBinId(1L);
-        missingBinIssue.setCity("TestCity");
 
         when(issueRepository.findById(1L)).thenReturn(Optional.of(missingBinIssue));
         doReturn(Optional.of(bin)).when(binsRepository).findById(bin.getId());
