@@ -59,7 +59,7 @@ public class IssueTracker implements Subject {
     }
 
     //create and save new issue in db
-    public void createIssue(IssueRequest request) {
+    public Issue createIssue(IssueRequest request) {
         //make sure the bin exists in the city
         Optional<Bin> optionalBin = binsRepository.findById(request.getBinId());
         Bin bin = null;
@@ -79,6 +79,7 @@ public class IssueTracker implements Subject {
                 log.info("Issue created in city {} for bin: {}", request.getCity(), request.getBinId());
                 //notify the workers
                 notifyObservers(issue);
+                return issue;
             } else {
                 throw new EntityNotFoundException();
             }
@@ -114,5 +115,13 @@ public class IssueTracker implements Subject {
             throw new EntityNotFoundException("Couldn't find issue");
 
         }
+    }
+
+    public List<Issue> checkIssues(String username){
+        List<Issue> issues = issueRepository.findByUsername(username);
+        if (issues.isEmpty()){
+            throw new EntityNotFoundException("Couldn't find issue");
+        }
+        return issues;
     }
 }
