@@ -211,4 +211,28 @@ public class BinControllerTest {
                         .content(objectMapper.writeValueAsString(ids)))
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError());
     }
+
+    @Test
+    @WithMockUser(roles = "WORKER")
+    public void testFullBin_Success() throws Exception {
+        Long binId = 1L;
+        doNothing().when(binService).binFull(binId);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/bins/full")
+                        .param("binId", binId.toString())  // Pass binId as a query parameter
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "WORKER")
+    public void testFullBin_Failure() throws Exception {
+        Long binId = 1L;
+        doThrow(new RuntimeException()).when(binService).binFull(binId);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/bins/full")
+                        .param("binId", binId.toString())  // Pass binId as a query parameter
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+    }
 }

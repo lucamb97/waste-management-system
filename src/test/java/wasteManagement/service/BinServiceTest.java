@@ -102,4 +102,26 @@ public class BinServiceTest {
         //Verifications
         verify(binsRepository, times(1)).deleteAllById(idsToDelete);
     }
+
+    @Test
+    public void testBinFull_Success() {
+        Long binId = bin1.getId();
+        when(binsRepository.findById(binId)).thenReturn(Optional.of(bin1));
+
+        binService.binFull(binId);
+
+        assertTrue(bin1.getNeedsEmptying());
+        verify(binsRepository, times(1)).save(bin1);
+    }
+
+    @Test
+    public void testBinFull_BinNotFound() {
+        Long binId = 1L;
+
+        when(binsRepository.findById(binId)).thenReturn(Optional.empty());
+
+        binService.binFull(binId);
+
+        verify(binsRepository, never()).save(any(Bin.class));
+    }
 }

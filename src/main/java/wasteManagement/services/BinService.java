@@ -27,5 +27,14 @@ public class BinService {
     public void addBins(List<Bin> bins){binsRepository.saveAll(bins);}
 
     public void deleteBins(List<Long> ids) {binsRepository.deleteAllById(ids);}
+
+    public void binFull(Long binId) {
+        Optional<Bin> optionalBin = binsRepository.findById(binId);
+        if(optionalBin.isPresent()){
+            Bin bin = optionalBin.get();
+            bin.setNeedsEmptying(true);
+            binsRepository.save(bin);
+        }
+    }
 }
 

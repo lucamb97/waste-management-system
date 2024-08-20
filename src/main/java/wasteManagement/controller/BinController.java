@@ -1,5 +1,6 @@
 package wasteManagement.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -97,5 +98,18 @@ public class BinController {
             log.error("Error deleting bins {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-            }
+    }
+
+    //this is gonna be used by the bins to notify that they are full
+    @PutMapping(path = "/full")
+    public ResponseEntity<Void> fullBin(@RequestParam Long binId) {
+        try {
+            binService.binFull(binId);
+            log.info("Registered bin as full");
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error registering bin as full");
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

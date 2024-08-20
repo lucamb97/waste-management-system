@@ -22,13 +22,10 @@ public class AdminService {
 
     @Autowired
     private AuthorityRepository authorityRepository;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private JdbcUserDetailsManager jdbcUserDetailsManager;
-
     @Autowired
     private IssueTracker issueTracker;
 
