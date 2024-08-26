@@ -8,6 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 import wasteManagement.configuration.utils.JwtUtils;
+import wasteManagement.model.utils.LoginRequest;
 import wasteManagement.model.utils.RegisterRequest;
 import wasteManagement.model.utils.LoginResponse;
 import wasteManagement.services.AuthService;
@@ -46,11 +47,11 @@ public class AuthController {
 
     //This is used to login and get a JWT token for authorization
     @GetMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest request) {
         LoginResponse response;
         try {
-            response = authService.userLogin(username, password);
-            log.info("user: {} logged in",username);
+            response = authService.userLogin(request.getUsername(), request.getPassword());
+            log.info("user: {} logged in",request.getUsername());
         } catch (AuthenticationException e) {
             log.warn("Login with bad credentials");
             return new ResponseEntity<>("Bad credentials", HttpStatus.NOT_FOUND);

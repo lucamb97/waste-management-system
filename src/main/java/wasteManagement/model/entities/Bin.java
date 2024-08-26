@@ -2,7 +2,6 @@ package wasteManagement.model.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.lang.Nullable;
@@ -14,7 +13,6 @@ import org.springframework.lang.Nullable;
 public class Bin {
 
     @Id
-    @GeneratedValue
     private Long id;
 
     @Column(name = "capacity(L)")
