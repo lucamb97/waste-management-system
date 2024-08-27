@@ -9,7 +9,7 @@ import wasteManagement.model.repositorys.IssueRepository;
 import java.util.Optional;
 
 @Entity
-@DiscriminatorValue("NEED_EMERGENCY_EMPTY")
+@DiscriminatorValue("NEED_EMPTY")
 public class NeedEmergencyEmptyIssue extends Issue {
 
     @Override

@@ -46,15 +46,15 @@ public class AuthController {
     }
 
     //This is used to login and get a JWT token for authorization
-    @GetMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest request) {
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> authenticateUser(@RequestBody LoginRequest request) {
         LoginResponse response;
         try {
             response = authService.userLogin(request.getUsername(), request.getPassword());
             log.info("user: {} logged in",request.getUsername());
         } catch (AuthenticationException e) {
             log.warn("Login with bad credentials");
-            return new ResponseEntity<>("Bad credentials", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(response);
     }
