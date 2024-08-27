@@ -43,9 +43,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests.requestMatchers(  "/swagger-ui/**","v3/api-docs/**","auth/**").permitAll() //everyone can access
                                 .requestMatchers("/user/**").authenticated() //all authenticated users can access
-                                .requestMatchers("/worker/**").hasAnyRole("WORKER", "ADMIN") //only workers and admins can access
+                                .requestMatchers("/worker/**", "/bin/**").hasAnyRole("WORKER", "ADMIN") //only workers and admins can access
                                 .requestMatchers("/admin/**").hasRole("ADMIN") //only admins can access
-                                .anyRequest().authenticated()); //any other request needs any authentication
+                                .anyRequest().permitAll()); //any other request
         http.sessionManagement(
                 session ->
                         session.sessionCreationPolicy(
