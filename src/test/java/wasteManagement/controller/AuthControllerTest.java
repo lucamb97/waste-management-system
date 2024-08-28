@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import wasteManagement.configuration.utils.JwtUtils;
+import wasteManagement.model.utils.LoginRequest;
 import wasteManagement.model.utils.LoginResponse;
 import wasteManagement.model.utils.RegisterRequest;
 import wasteManagement.services.AuthService;
@@ -106,27 +107,28 @@ public class AuthControllerTest {
 
     @Test
     public void testAuthenticateUser_Success() throws Exception {
+        LoginRequest loginRequest = new LoginRequest("username", "password");
         LoginResponse loginResponse = new LoginResponse("username", Collections.singletonList("USER"),"token");
         //Mock the method
-        when(authService.userLogin("testuser", "password")).thenReturn(loginResponse);
+        when(authService.userLogin("username", "password")).thenReturn(loginResponse);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/auth/login")
-                        .param("username", "testuser")
-                        .param("password", "password"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.jwtToken").value("token"));
     }
 
     @Test
     public void testAuthenticateUser_BadCredentials() throws Exception {
+        LoginRequest loginRequest = new LoginRequest("username", "password");
         //Throw the exception
         doThrow(new AuthenticationException("Bad credentials") {}).when(authService)
                 .userLogin(anyString(), anyString());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/auth/login")
-                        .param("username", "testuser")
-                        .param("password", "wrongpassword"))
-                .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string("Bad credentials"));
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isUnauthorized());
     }
 }

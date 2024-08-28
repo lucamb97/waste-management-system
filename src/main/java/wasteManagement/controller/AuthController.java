@@ -54,7 +54,7 @@ public class AuthController {
             log.info("user: {} logged in",request.getUsername());
         } catch (AuthenticationException e) {
             log.warn("Login with bad credentials");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         return ResponseEntity.ok(response);
     }
